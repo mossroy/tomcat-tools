@@ -20,6 +20,8 @@ import org.apache.tomcat.util.IntrospectionUtils.PropertySource;
  * they do not appear in the tomcat tree. It's useful when this tomcat tree is
  * readable by people that should not know the jdbc password.
  * 
+ * See http://blog.mossroy.fr/2015/11/07/securiser-les-mots-de-passe-jdbc-du-server-xml-dun-tomcat/
+ * 
  * License LGPL v3
  * 
  * @author Mossroy

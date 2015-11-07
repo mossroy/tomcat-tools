@@ -30,6 +30,8 @@ To use it, 2 lines have to be added at the end of conf/catalina.properties :
 
 and you need to add the generated jar in the lib folder of tomcat.
 
+See http://blog.mossroy.fr/2015/11/07/securiser-les-mots-de-passe-jdbc-du-server-xml-dun-tomcat/ (in French)
+
 
 Tested with Tomcat 7.0.53. Should work with any Tomcat >=7.
 
