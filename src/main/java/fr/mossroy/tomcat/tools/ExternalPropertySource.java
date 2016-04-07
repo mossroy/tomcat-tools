@@ -61,7 +61,8 @@ public class ExternalPropertySource implements PropertySource {
         if (externalProperties != null)  {
             return externalProperties.getProperty(string);
         } else {
-            LOGGER.warn("Unable to find the value of property " + string + " in the external property file because it has not been initialized correctly");
+            // If the property is not found, we return null (and Tomcat will leave the ${propertyname} )
+            // NB : Tomcat uses this PropertySource for each XML file it parses (see IntrospectionUtils source code), not only on server.xml
             return null;
         }
     }
