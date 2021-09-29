@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.IntrospectionUtils.PropertySource;
@@ -31,8 +33,9 @@ public class ExternalPropertySource implements PropertySource {
     private static final String CATALINA_PROPERTIES = "conf/catalina.properties";
     private static final String CATALINA_PROPERTIES_FILE_PROPERTY = "fr.mossroy.tomcat.tools.ExternalPropertySource.file";
     private static final Log LOGGER = LogFactory.getLog(ExternalPropertySource.class);
+    private static final Pattern regExp = Pattern.compile("\\$\\{([^\\}]*)\\}");
     private Properties externalProperties;
-
+    
     public ExternalPropertySource() {
         try {
             String catalinaBase = System.getProperty("catalina.base");
@@ -47,7 +50,20 @@ public class ExternalPropertySource implements PropertySource {
             if (externalPropertiesFile == null || externalPropertiesFile.isEmpty()) {
                 throw new IOException("The external property file location is not set in " + CATALINA_PROPERTIES + " (expected value for " + CATALINA_PROPERTIES_FILE_PROPERTY + ")");
             }
-            FileInputStream fileInputStream = new FileInputStream(externalPropertiesFile);
+            
+            // Replace the Java variables
+            Matcher m = regExp.matcher(externalPropertiesFile);
+            StringBuffer externalPropertiesFileBuffer = new StringBuffer();
+            while (m.find()) {
+                if (System.getProperty(m.group(1)) == null) {
+                    // unexistant propertie, no replacement
+                } else {
+                    m.appendReplacement(externalPropertiesFileBuffer, System.getProperty(m.group(1)));
+                }
+            }
+            m.appendTail(externalPropertiesFileBuffer);
+            
+            FileInputStream fileInputStream = new FileInputStream(externalPropertiesFileBuffer.toString());
             externalProperties = new Properties();
             externalProperties.load(fileInputStream);
         } catch (IOException e) {
